@@ -47,15 +47,9 @@ makeProfileMatrix sl = res
                                                            -- head x tar första 
     equalFst a b = (fst a) == (fst b)
     res = map sort (map (\l -> unionBy equalFst l defaults) tmp1 -- lägger till tex C,0 ifall det inte förekommer
- 
-profileFrequency :: Profile -> Int -> Char -> Double
-
-profileDistance :: Profile -> Profile -> Double
-profileDistance p1 p2 = dist
-    where
-        
 
 -- Kollar om det är en DNA.
+
 isProtein :: String -> Bool
 isProtein [] = False                 -- Kommer vi hit är det en DNA
 isProtein (c : rest) 
@@ -105,7 +99,7 @@ countDiff s1 s2
 profileFrequency :: Profile -> Int -> Char -> Double
 profileFrequency p i c = res where
     matrix = profileMatrix p                      -- Matrisen
-    firstRow = matrix !! 1                        -- första raden i matrisen
+    firstRow = matrix !! 1                        -- första kolumnen i matrisen
     numbers = map(snd)firstRow                    -- numrerna i tupeln i första raden
     amount = fromIntegral(sum numbers)            -- totala antalet
     wantedRow = matrix !! i                       -- den rad med tuples vi vill ha
