@@ -55,8 +55,8 @@ seqLength m = length (seqSequence m)
 
 seqDistance :: MolSeq -> MolSeq -> Double
 seqDistance m1 m2 = case molTypes m1 m2 of 
-						(True, True)	-> calcProtein m1 m2
-						(False, False)	-> calcDNA m1 m2
+						("Protein", "Protein")	-> calcProtein m1 m2
+						("DNA", "DNA")	-> calcDNA m1 m2
 						_				-> error "Invalid types"
 	
 	
@@ -72,8 +72,8 @@ calcProtein m1 m2 = if hammingDist m1 m2 > 0.94
 				
 -- Tar in två sekvenser
 -- Returnerar en Tuple med två Boolean som säger om sekvenserna är DNA eller inte				   
-molTypes :: MolSeq -> MolSeq -> (Bool,Bool)
-molTypes m1 m2 = (isProtein (seqSequence m1), isProtein (seqSequence m2))
+molTypes :: MolSeq -> MolSeq -> (String,String)
+molTypes m1 m2 = (seqType m1, seqType m2)
 
 -- Beränkar det normaliserade Hamming-avståndet mellan två sekvenser		
 hammingDist :: MolSeq -> MolSeq -> Double
