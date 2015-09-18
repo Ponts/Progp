@@ -33,26 +33,31 @@ makeProfileMatrix sl = res
         zip aminoacids (replicate (length aminoacids) 0)   -- Rad (ii) -||- samma sak fast med karaktärer för Protein
     strs = map seqSequence sl                              -- Rad (iii) strs är en lista som håller alla sekvenserna
     tmp1 = map (map (\x -> ((head x), (length x))) . group . sort)
-               (transpose strs)                            -- Rad (iv) transpose strs är gör om strängarna i strs så att den första strängen i listan är den första bokstaven i varje sträng från strs
-
-                                                              -- första map gör det inom första parentesen på transpose strs
-                                                              -- Sort sorterar listan transpose strs, group gör att varje bokstav har en egen sträng. ex "AABB" blir "AA" "BB" 
-                                                              -- head x tar första bokstaven från en sekvens, length x tar längden på den sekvensen. Så man får en tuple där det står bokstaven och hur ofta den förekommer i första strängen, dvs första platsen tå listan är transponerad.
+               (transpose strs)               -- Rad (iv) transpose strs är gör om strängarna i strs så att den första strängen i listan är den första bokstaven i varje sträng från strs
+-- första map gör det inom första parentesen på transpose strs
+-- Sort sorterar listan transpose strs, group gör att varje bokstav har en egen sträng. ex "AABB" blir "AA" "BB" 
+-- head x tar första bokstaven från en sekvens, length x tar längden på den sekvensen. Så man får en tuple där det står bokstaven och hur ofta den förekommer i första strängen, dvs första platsen tå listan är transponerad.    
+    equalFst a b = (fst a) == (fst b)
+    res = map sort (map (\l -> unionBy equalFst l defaults) tmp1 -- lägger till tex C,0 ifall det inte förekommer
 -- Sort och group körs på en sekvens (i första map), så den sorterar och delar in i strängar där strängens längd är antalet gånger bokstaven förekommer.
 -- Sedan körs head x length x på dessa grupper, så man får en tupel med vilken bokstav det är och hur ofta den förekommer. Tillslut har man en dubbellista med tuppels
 -- där den första listan av tuppels i listan motsvarar första bokstaven i sekvenserna. tex [[(A,1),(B,2)]] så har vi 
 
                                                            -- första map gör det inom första parentesen på transpose strs
                                                            -- head x tar första 
-    equalFst a b = (fst a) == (fst b)
-    res = map sort (map (\l -> unionBy equalFst l defaults) tmp1 -- lägger till tex C,0 ifall det inte förekommer
+ 
  
 profileFrequency :: Profile -> Int -> Char -> Double
 
 profileDistance :: Profile -> Profile -> Double
-profileDistance p1 p2 = dist
-    where
-        
+profileDistance p1 p2 = if profSeqType p1 == "DNA"
+                            then calcDist p1 p2 [1..length(head(matrix p1))] nucleotides
+                            else calcDist p1 p2 [1..length(head(matrix p1))] aminoacids
+ --                               where
+ --                                   n = length(head(matrix p1))
+                            
+calcDist :: Profile -> Proflie -> [Int] -> String -> Double
+calcDist p1 p2 columns rows = map (\c -> (map (i -> (abs(profileFrequency p1 i c - profileFrequency p2 i c))) columns) rows
 
 -- Kollar om det är en DNA.
 isProtein :: String -> Bool
