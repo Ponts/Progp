@@ -6,7 +6,7 @@ import Data.List
 -- Datatyper
 data MolSeq = MolSeq {seqName :: String, seqSequence :: String, seqType :: String}
 
-data Profile= Profile {profileMatrix :: [[(Char, Int)]], profSeqType :: String, nrOfSequences :: Int, profileName :: String} 
+data Profile = Profile {profileMatrix :: [[(Char, Int)]], profSeqType :: String, nrOfSequences :: Int, profileName :: String} 
 
 
 
@@ -41,17 +41,11 @@ makeProfileMatrix sl = res
 -- Sort sorterar listan transpose strs, group gör att varje bokstav har en egen sträng. ex "AABB" blir "AA" "BB" 
 -- head x tar första bokstaven från en sekvens, length x tar längden på den sekvensen. Så man får en tuple där det står bokstaven och hur ofta den förekommer i första strängen, dvs första platsen tå listan är transponerad.    
     equalFst a b = (fst a) == (fst b)
-    res = map sort (map (\l -> unionBy equalFst l defaults) tmp1 -- lägger till tex C,0 ifall det inte förekommer
+    res = map sort (map (\l -> unionBy equalFst l defaults) tmp1) -- lägger till tex C,0 ifall det inte förekommer
 -- Sort och group körs på en sekvens (i första map), så den sorterar och delar in i strängar där strängens längd är antalet gånger bokstaven förekommer.
 -- Sedan körs head x length x på dessa grupper, så man får en tupel med vilken bokstav det är och hur ofta den förekommer. Tillslut har man en dubbellista med tuppels
 -- där den första listan av tuppels i listan motsvarar första bokstaven i sekvenserna. tex [[(A,1),(B,2)]] så har vi 
-
-                                                           -- första map gör det inom första parentesen på transpose strs
-                                                           -- head x tar första 
-    equalFst a b = (fst a) == (fst b)
-    res = map sort (map (\l -> unionBy equalFst l defaults) tmp1 -- lägger till tex C,0 ifall det inte förekommer
-
--- Kollar om det är en DNA.
+-- Kollar om det är en Protein.
 
 isProtein :: String -> Bool
 isProtein [] = False                 -- Kommer vi hit är det en DNA
@@ -112,9 +106,9 @@ profileFrequency p i c = res where
 
 profileDistance :: Profile -> Profile -> Double
 profileDistance p1 p2 = if profSeqType p1 == "DNA"
-                            then calcDist p1 p2 [1..length(head(matrix p1))] nucleotides
-                            else calcDist p1 p2 [1..length(head(matrix p1))] aminoacids
+                            then calcDist p1 p2 [1..length(head(profileMatrix p1))] nucleotides
+                            else calcDist p1 p2 [1..length(head(profileMatrix p1))] aminoacids
                             
-calcDist :: Profile -> Proflie -> [Int] -> String -> Double
-calcDist p1 p2 columns rows = map (\c -> (map (i -> (abs(profileFrequency p1 i c - profileFrequency p2 i c))) columns) rows
+calcDist :: Profile -> Profile -> [Int] -> String -> Double
+calcDist p1 p2 columns rows = map (\c -> (map (\i -> (abs(profileFrequency p1 i c - profileFrequency p2 i c))) columns)) rows
                             
