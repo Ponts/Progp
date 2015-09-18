@@ -5,8 +5,12 @@ module F2 where
 import Data.List
 -- Datatyper
 data MolSeq = MolSeq {seqName :: String, seqSequence :: String, seqType :: String}
+<<<<<<< HEAD
 data Profile= Profile {profileMatrix :: [[(Char, Int)]], profSeqType :: String, nrOfSequences :: Int, profileName :: String} 
 
+=======
+data Profile= Profile {matrix :: [[(Char, Int)]], profSeqType :: String, nrOfSequences :: Int, profileName :: String} 
+>>>>>>> origin/master
 
 -- Tar två strängar och avgör om det är en protein eller dna
 -- Returnar MolSeq protein eller dna
@@ -47,6 +51,16 @@ makeProfileMatrix sl = res
                                                            -- head x tar första 
     equalFst a b = (fst a) == (fst b)
     res = map sort (map (\l -> unionBy equalFst l defaults) tmp1 -- lägger till tex C,0 ifall det inte förekommer
+<<<<<<< HEAD
+=======
+ 
+profileFrequency :: Profile -> Int -> Char -> Double
+
+profileDistance :: Profile -> Profile -> Double
+profileDistance p1 p2 = dist
+    where
+        
+>>>>>>> origin/master
 
 -- Kollar om det är en DNA.
 
