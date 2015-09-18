@@ -35,29 +35,28 @@ makeProfileMatrix sl = res
     tmp1 = map (map (\x -> ((head x), (length x))) . group . sort)
                (transpose strs)                            -- Rad (iv) transpose strs är gör om strängarna i strs så att den första strängen i listan är den första bokstaven i varje sträng från strs
 
-               											   -- första map gör det inom första parentesen på transpose strs
-               											   -- Sort sorterar listan transpose strs, group gör att varje bokstav har en egen sträng. ex "AABB" blir "AA" "BB" 
-               											   -- head x tar första bokstaven från en sekvens, length x tar längden på den sekvensen. Så man får en tuple där det står bokstaven och hur ofta den förekommer i första strängen, dvs första platsen tå listan är transponerad.
+                                                              -- första map gör det inom första parentesen på transpose strs
+                                                              -- Sort sorterar listan transpose strs, group gör att varje bokstav har en egen sträng. ex "AABB" blir "AA" "BB" 
+                                                              -- head x tar första bokstaven från en sekvens, length x tar längden på den sekvensen. Så man får en tuple där det står bokstaven och hur ofta den förekommer i första strängen, dvs första platsen tå listan är transponerad.
 -- Sort och group körs på en sekvens (i första map), så den sorterar och delar in i strängar där strängens längd är antalet gånger bokstaven förekommer.
 -- Sedan körs head x length x på dessa grupper, så man får en tupel med vilken bokstav det är och hur ofta den förekommer. Tillslut har man en dubbellista med tuppels
 -- där den första listan av tuppels i listan motsvarar första bokstaven i sekvenserna. tex [[(A,1),(B,2)]] så har vi 
 
                                                            -- första map gör det inom första parentesen på transpose strs
                                                            -- head x tar första 
-
     equalFst a b = (fst a) == (fst b)
-<<<<<<< HEAD
-    res = map sort (map (\l -> unionBy equalFst l defaults) tmp1)
+    res = map sort (map (\l -> unionBy equalFst l defaults) tmp1 -- lägger till tex C,0 ifall det inte förekommer
  
 profileFrequency :: Profile -> Int -> Char -> Double
- 
-=======
-    res = map sort (map (\l -> unionBy equalFst l defaults) tmp1) -- lägger till tex C,0 ifall det inte förekommer
 
->>>>>>> 8e8b41ee9933e8a51c44fd74b4d38fc4fb09b73a
+profileDistance :: Profile -> Profile -> Double
+profileDistance p1 p2 = dist
+    where
+        
+
 -- Kollar om det är en DNA.
 isProtein :: String -> Bool
-isProtein [] = False 				-- Kommer vi hit är det en DNA
+isProtein [] = False                 -- Kommer vi hit är det en DNA
 isProtein (c : rest) 
                 | elem c proteinChars = True    -- kommer vi hit är det en protein
                 | otherwise = isProtein(rest)   -- Är en char, kolla nästa
@@ -87,11 +86,11 @@ calcProtein m1 m2 = if hammingDist m1 m2 > 0.94
             else -(19/20)*log(1-(20*hammingDist m1 m2)/19)
         
 -- Tar in två sekvenser
--- Returnerar en Tuple med två Strings som säger om sekvenserna är DNA eller Protein				   
+-- Returnerar en Tuple med två Strings som säger om sekvenserna är DNA eller Protein                   
 molTypes :: MolSeq -> MolSeq -> (String,String)
 molTypes m1 m2 = (seqType m1, seqType m2)
 
--- Beränkar det normaliserade Hamming-avståndet mellan två sekvenser		
+-- Beränkar det normaliserade Hamming-avståndet mellan två sekvenser        
 hammingDist :: MolSeq -> MolSeq -> Double
 hammingDist m1 m2 = countDiff (seqSequence m1) (seqSequence m2) / fromIntegral (length (seqSequence m1))
 
