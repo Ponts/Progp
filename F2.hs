@@ -5,7 +5,10 @@ module F2 where
 import Data.List
 -- Datatyper
 data MolSeq = MolSeq {seqName :: String, seqSequence :: String, seqType :: String}
-data Profile= Profile {matrix :: [[(Char, Int)]], profSeqType :: String, nrOfSequences :: Int, profileName :: String} 
+
+data Profile= Profile {profileMatrix :: [[(Char, Int)]], profSeqType :: String, nrOfSequences :: Int, profileName :: String} 
+
+
 
 -- Tar två strängar och avgör om det är en protein eller dna
 -- Returnar MolSeq protein eller dna
@@ -45,21 +48,11 @@ makeProfileMatrix sl = res
 
                                                            -- första map gör det inom första parentesen på transpose strs
                                                            -- head x tar första 
- 
- 
-profileFrequency :: Profile -> Int -> Char -> Double
-
-profileDistance :: Profile -> Profile -> Double
-profileDistance p1 p2 = if profSeqType p1 == "DNA"
-                            then calcDist p1 p2 [1..length(head(matrix p1))] nucleotides
-                            else calcDist p1 p2 [1..length(head(matrix p1))] aminoacids
- --                               where
- --                                   n = length(head(matrix p1))
-                            
-calcDist :: Profile -> Proflie -> [Int] -> String -> Double
-calcDist p1 p2 columns rows = map (\c -> (map (i -> (abs(profileFrequency p1 i c - profileFrequency p2 i c))) columns) rows
+    equalFst a b = (fst a) == (fst b)
+    res = map sort (map (\l -> unionBy equalFst l defaults) tmp1 -- lägger till tex C,0 ifall det inte förekommer
 
 -- Kollar om det är en DNA.
+
 isProtein :: String -> Bool
 isProtein [] = False                 -- Kommer vi hit är det en DNA
 isProtein (c : rest) 
@@ -105,3 +98,23 @@ countDiff [] [] = 0.0 -- Strängarna är samma längd så detta funkar
 countDiff s1 s2
                     | head s1 /= head s2 = 1.0 + countDiff (tail s1) (tail s2)
                     | otherwise = countDiff (tail s1) (tail s2)
+
+profileFrequency :: Profile -> Int -> Char -> Double
+profileFrequency p i c = res where
+    matrix = profileMatrix p                      -- Matrisen
+    firstRow = matrix !! 1                        -- första kolumnen i matrisen
+    numbers = map(snd)firstRow                    -- numrerna i tupeln i första raden
+    amount = fromIntegral(sum numbers)            -- totala antalet
+    wantedRow = matrix !! i                       -- den rad med tuples vi vill ha
+    wantedInt = sum(map snd wantedRow)
+    wanted = fromIntegral(wantedInt)
+    res = wanted/amount
+
+profileDistance :: Profile -> Profile -> Double
+profileDistance p1 p2 = if profSeqType p1 == "DNA"
+                            then calcDist p1 p2 [1..length(head(matrix p1))] nucleotides
+                            else calcDist p1 p2 [1..length(head(matrix p1))] aminoacids
+                            
+calcDist :: Profile -> Proflie -> [Int] -> String -> Double
+calcDist p1 p2 columns rows = map (\c -> (map (i -> (abs(profileFrequency p1 i c - profileFrequency p2 i c))) columns) rows
+                            
