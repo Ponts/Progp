@@ -94,15 +94,12 @@ countDiff s1 s2
                     | otherwise = countDiff (tail s1) (tail s2)
 
 profileFrequency :: Profile -> Int -> Char -> Double
-profileFrequency p i c = res where
-    matrix = profileMatrix p                      -- Matrisen
-    firstRow = matrix !! 1                        -- första kolumnen i matrisen
-    numbers = map(snd)firstRow                    -- numrerna i tupeln i första raden
-    amount = fromIntegral(sum numbers)            -- totala antalet
-    wantedRow = matrix !! i                       -- den rad med tuples vi vill ha
-    wantedInt = sum(map snd wantedRow)
-    wanted = fromIntegral(wantedInt)
-    res = wanted/amount
+profileFrequency p i c = 
+   (fromIntegral(search ((profileMatrix p) !! i) c))/(fromIntegral(nrOfSequences p))
+   where
+      search (s:rest) ch
+         |fst(s) == ch = snd(s)
+         |otherwise = search rest ch
 
 profileDistance :: Profile -> Profile -> Double
 profileDistance p1 p2 = if profSeqType p1 == "DNA"
@@ -110,5 +107,8 @@ profileDistance p1 p2 = if profSeqType p1 == "DNA"
                             else calcDist p1 p2 [1..length(head(profileMatrix p1))] aminoacids
                             
 calcDist :: Profile -> Profile -> [Int] -> String -> Double
-calcDist p1 p2 columns rows = map (\c -> (map (\i -> (abs(profileFrequency p1 i c - profileFrequency p2 i c))) columns)) rows
-                            
+calcDist p1 p2 columns rows = sumDist(map (\c -> (map (\i -> (abs(profileFrequency p1 i c - profileFrequency p2 i c))) columns)) rows)
+
+sumDist :: [[Double]] -> Double
+sumDist m = sum (map (\l -> sum l) m)
+                           
