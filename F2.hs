@@ -31,9 +31,11 @@ makeProfileMatrix sl = res
         zip nucleotides (replicate (length nucleotides) 0) -- Rad (i) Skapar en lista av tuples med bokstav respektive nolla
       else 
         zip aminoacids (replicate (length aminoacids) 0)   -- Rad (ii) -||- samma sak fast med karaktärer för Protein
-    strs = map seqSequence sl                              -- Rad (iii) strs är en lista som håller typen av molseq (DNA eller Protein)
+    strs = map seqSequence sl                              -- Rad (iii) strs är en lista som håller alla sekvenserna
     tmp1 = map (map (\x -> ((head x), (length x))) . group . sort)
-               (transpose strs)                            -- Rad (iv) 
+               (transpose strs)                            -- Rad (iv) transpose strs är gör om strängarna i strs så att den första strängen i listan är den första bokstaven i varje sträng från strs
+               											   -- första map gör det inom första parentesen på transpose strs
+               											   -- head x tar första 
     equalFst a b = (fst a) == (fst b)
     res = map sort (map (\l -> unionBy equalFst l defaults) tmp1)
 
