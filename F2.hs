@@ -35,13 +35,17 @@ makeProfileMatrix sl = res
     tmp1 = map (map (\x -> ((head x), (length x))) . group . sort)
                (transpose strs)                            -- Rad (iv) transpose strs är gör om strängarna i strs så att den första strängen i listan är den första bokstaven i varje sträng från strs
                											   -- första map gör det inom första parentesen på transpose strs
-               											   -- head x tar första 
+               											   -- Sort sorterar listan transpose strs, group gör att varje bokstav har en egen sträng. ex "AABB" blir "AA" "BB" 
+               											   -- head x tar första bokstaven från en sekvens, length x tar längden på den sekvensen. Så man får en tuple där det står bokstaven och hur ofta den förekommer i första strängen, dvs första platsen tå listan är transponerad.
+-- Sort och group körs på en sekvens (i första map), så den sorterar och delar in i strängar där strängens längd är antalet gånger bokstaven förekommer.
+-- Sedan körs head x length x på dessa grupper, så man får en tupel med vilken bokstav det är och hur ofta den förekommer. Tillslut har man en dubbellista med tuppels
+-- där den första listan av tuppels i listan motsvarar första bokstaven i sekvenserna. tex [[(A,1),(B,2)]] så har vi 
     equalFst a b = (fst a) == (fst b)
-    res = map sort (map (\l -> unionBy equalFst l defaults) tmp1)
+    res = map sort (map (\l -> unionBy equalFst l defaults) tmp1) -- lägger till tex C,0 ifall det inte förekommer
 
 -- Kollar om det är en DNA.
 isProtein :: String -> Bool
-isProtein [] = False 				-- Kommer vi hit är det en Protein
+isProtein [] = False 				-- Kommer vi hit är det en DNA
 isProtein (c : rest) 
 				| elem c proteinChars = True	-- kommer vi hit är det en protein
 				| otherwise = isProtein(rest)	-- Är en char, kolla nästa
